@@ -1,5 +1,5 @@
 import { providers, categories } from "./data/providers.js";
-import { translations } from "./i18n.js";
+import { translations, isSupportedLocale } from "./i18n.js";
 import { filterProviders, localized, createBrief } from "./lib/catalog.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -16,8 +16,8 @@ function projectPoint(longitude, latitude) {
 
 function initialLocale() {
   const requested = new URLSearchParams(location.search).get("lang");
-  if (requested && translations[requested]) return requested;
-  try { const stored = localStorage.getItem("als-locale"); if (translations[stored]) return stored; } catch {}
+  if (isSupportedLocale(requested)) return requested;
+  try { const stored = localStorage.getItem("als-locale"); if (isSupportedLocale(stored)) return stored; } catch {}
   return "hy";
 }
 
@@ -35,7 +35,7 @@ function dateLabel(value) {
 }
 
 function setLocale(locale) {
-  if (!translations[locale]) return;
+  if (!isSupportedLocale(locale)) return;
   state.locale = locale;
   document.documentElement.lang = locale;
   document.title = t().title;
@@ -45,6 +45,9 @@ function setLocale(locale) {
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.placeholder = t()[element.dataset.i18nPlaceholder] || "";
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+    element.setAttribute("aria-label", t()[element.dataset.i18nAria] || "");
   });
   document.querySelectorAll("[data-lang]").forEach((button) => {
     const active = button.dataset.lang === locale;
@@ -72,7 +75,7 @@ function renderCategories() {
 function renderProviders() {
   const matches = filterProviders(providers, state.query, state.category);
   $("#result-count").textContent = String(matches.length);
-  $("#provider-grid").innerHTML = matches.map((provider, index) => `<article class="provider-card"><div class="card-top"><span class="card-index">NO. ${String(index + 1).padStart(2, "0")}</span><label class="card-compare"><input type="checkbox" data-compare="${escapeHtml(provider.id)}" ${state.compared.has(provider.id) ? "checked" : ""} aria-label="${escapeHtml(t().compare)} ${escapeHtml(localized(provider.name, state.locale))}">${escapeHtml(t().compare)}</label></div><div class="card-sector">${escapeHtml(t().categories[provider.sector] || provider.sector)}</div><h3>${escapeHtml(localized(provider.name, state.locale))}</h3><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="card-bottom"><span class="card-location">${escapeHtml(localized(provider.city, state.locale))} / ARMENIA</span><button class="card-open" type="button" data-profile="${escapeHtml(provider.id)}" aria-label="${escapeHtml(t().profile)}: ${escapeHtml(localized(provider.name, state.locale))}">↗</button></div></article>`).join("");
+  $("#provider-grid").innerHTML = matches.map((provider, index) => `<article class="provider-card"><div class="card-top"><span class="card-index">NO. ${String(index + 1).padStart(2, "0")}</span><label class="card-compare"><input type="checkbox" data-compare="${escapeHtml(provider.id)}" ${state.compared.has(provider.id) ? "checked" : ""} aria-label="${escapeHtml(t().compare)} ${escapeHtml(localized(provider.name, state.locale))}">${escapeHtml(t().compare)}</label></div><div class="card-sector">${escapeHtml(t().categories[provider.sector] || provider.sector)}</div><h3>${escapeHtml(localized(provider.name, state.locale))}</h3><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="card-bottom"><span class="card-location">${escapeHtml(localized(provider.city, state.locale))} / ${escapeHtml(t().country)}</span><button class="card-open" type="button" data-profile="${escapeHtml(provider.id)}" aria-label="${escapeHtml(t().profile)}: ${escapeHtml(localized(provider.name, state.locale))}">↗</button></div></article>`).join("");
   $("#empty-state").hidden = matches.length !== 0;
   $("#empty-state h3").textContent = providers.length ? t().noMatchTitle : t().emptyTitle;
   $("#empty-state p").textContent = providers.length ? t().noMatchBody : t().emptyBody;
@@ -126,7 +129,7 @@ function openProfile(id, refresh = false) {
     [t().languages, provider.languages?.join(", ") || t().unknown],
     [t().evidenceDate, dateLabel(provider.sourceChecked)]
   ];
-  $("#profile-content").innerHTML = `<div class="dialog-head"><span class="dialog-code">PROFILE / SOURCE-LINKED</span><button type="button" data-close="profile-dialog" aria-label="${escapeHtml(t().close)}">×</button></div><div class="profile-content"><div class="profile-meta">${escapeHtml(t().categories[provider.sector] || provider.sector)} / ${escapeHtml(localized(provider.city, state.locale))}</div><h2>${escapeHtml(localized(provider.name, state.locale))}</h2><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="profile-grid">${details.map(([label, value]) => `<div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value || t().unknown)}</span></div>`).join("")}</div><div class="profile-source"><strong>${escapeHtml(t().source)}:</strong> ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t().visitSource)} ↗</a>` : escapeHtml(t().unknown)}<br>${escapeHtml(t().claimNote)}</div><button type="button" data-inquire="${escapeHtml(provider.id)}">${escapeHtml(t().briefCta)} ↗</button></div>`;
+  $("#profile-content").innerHTML = `<div class="dialog-head"><span class="dialog-code">${escapeHtml(t().profileCode)}</span><button type="button" data-close="profile-dialog" aria-label="${escapeHtml(t().close)}">×</button></div><div class="profile-content"><div class="profile-meta">${escapeHtml(t().categories[provider.sector] || provider.sector)} / ${escapeHtml(localized(provider.city, state.locale))}</div><h2>${escapeHtml(localized(provider.name, state.locale))}</h2><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="profile-grid">${details.map(([label, value]) => `<div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value || t().unknown)}</span></div>`).join("")}</div><div class="profile-source"><strong>${escapeHtml(t().source)}:</strong> ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t().visitSource)} ↗</a>` : escapeHtml(t().unknown)}<br>${escapeHtml(t().claimNote)}</div><button type="button" data-inquire="${escapeHtml(provider.id)}">${escapeHtml(t().briefCta)} ↗</button></div>`;
   $("#profile-dialog").dataset.id = id;
   if (!refresh) {
     $("#profile-dialog").showModal();

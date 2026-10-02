@@ -1,13 +1,20 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { providers } from "../data/providers.js";
-import { translations } from "../i18n.js";
+import { translations, isSupportedLocale } from "../i18n.js";
 import { filterProviders, localized, createBrief } from "../lib/catalog.js";
 
 const fixture = [
   { id: "fixture-a", sector: "research", name: { en: "Assay Lab", ru: "Лаборатория анализов", hy: "Անալիզի լաբորատորիա" }, city: { en: "Yerevan", ru: "Ереван", hy: "Երևան" }, summary: { en: "Assay design", ru: "Разработка анализов", hy: "Փորձարկումների մշակում" }, services: { en: ["Assay design"], ru: ["Разработка анализов"], hy: ["Փորձարկումների մշակում"] } },
   { id: "fixture-b", sector: "analytical", name: { en: "Quality Lab", ru: "Лаборатория качества", hy: "Որակի լաբորատորիա" }, city: { en: "Gyumri", ru: "Гюмри", hy: "Գյումրի" }, summary: { en: "Testing", ru: "Тестирование", hy: "Փորձարկում" }, services: { en: ["Quality testing"], ru: ["Контроль качества"], hy: ["Որակի ստուգում"] } }
 ];
+
+assert.equal(isSupportedLocale("hy"), true);
+assert.equal(isSupportedLocale("ru"), true);
+assert.equal(isSupportedLocale("en"), true);
+assert.equal(isSupportedLocale("toString"), false);
+assert.equal(isSupportedLocale("__proto__"), false);
+assert.equal(isSupportedLocale(null), false);
 
 assert.equal(filterProviders(fixture, "", "all").length, 2);
 assert.deepEqual(filterProviders(fixture, "анализов", "all").map((p) => p.id), ["fixture-a"]);

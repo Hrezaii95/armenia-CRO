@@ -1,7 +1,10 @@
 export const translations = {
   hy: {
     title: "Հայաստանի կենսագիտության ինդեքս",
-    brand: "ԿԵՆՍԱԳԻՏՈՒԹՅԱՆ ԻՆԴԵՔՍ",
+    brand: "ԿԵՆՍԱԳԻՏՈՒԹՅԱՆ ԻՆԴԵՔՍ", country: "ՀԱՅԱՍՏԱՆ", profileCode: "ՊՐՈՖԻԼ / ԱՂԲՅՈՒՐՈՎ",
+    homeLabel: "Ինդեքսի գլխավոր էջ", mainNavigation: "Հիմնական նավարկություն", languageLabel: "Լեզու", searchLabel: "Որոնել կազմակերպություններ", categoryLabel: "Ոլորտ", draftLabel: "Խմբագրվող հարցման նախագիծ",
+    filterCode: "ԶՏԻՉ / 01", indexCode: "ԻՆԴԵՔՍ / ՀԱՅԱՍՏԱՆ", mapCredit: "NATURAL EARTH / ԵՐԿՐԻ ՈՒՐՎԱԳԻԾ", footerTop: "↑ ՎԵՐԵՎ", compareCode: "ՀԱՄԵՄԱՏՈՒԹՅՈՒՆ / ԻՆԴԵՔՍ", localUnsent: "ՏԵՂԱՅԻՆ / ՉՈՒՂԱՐԿՎԱԾ",
+    artResearch: "ՀԵՏԱԶՈՏՈՒԹՅՈՒՆ", artDiscovery: "ՀԱՅՏՆԱԲԵՐՈՒՄ", artConnection: "ԿԱՊԵՐ", artCoordinate: "ՏԵՂԱԿԱՅՎԱԾ / ԿԱՊՎԱԾ / ՍՏՈՒԳՎՈՂ",
     navIndex: "Կազմակերպություններ", navMap: "Քարտեզ", navMethod: "Մեթոդ", navBrief: "Կազմել հարցում",
     heroTag: "ՀԱՅԱՍՏԱՆ / ՀԵՏԱԶՈՏՈՒԹՅՈՒՆ / ԱՐՏԱԴՐՈՒԹՅՈՒՆ",
     heroA: "Հայաստանի գիտությունը՝", heroB: "մեկ քարտեզում։",
@@ -20,7 +23,10 @@ export const translations = {
     categories: { all: "Բոլորը", cro: "CRO", research: "Հետազոտություն", analytical: "Վերլուծություն", manufacturing: "Արտադրություն", medtech: "Բժշկական տեխնոլոգիաներ", cosmetics: "Կոսմետիկա" }
   },
   ru: {
-    title: "Индекс наук о жизни Армении", brand: "ИНДЕКС НАУК О ЖИЗНИ",
+    title: "Индекс наук о жизни Армении", brand: "ИНДЕКС НАУК О ЖИЗНИ", country: "АРМЕНИЯ", profileCode: "ПРОФИЛЬ / С ИСТОЧНИКОМ",
+    homeLabel: "Главная страница индекса", mainNavigation: "Главная навигация", languageLabel: "Язык", searchLabel: "Поиск организаций", categoryLabel: "Направление", draftLabel: "Редактируемый черновик запроса",
+    filterCode: "ФИЛЬТР / 01", indexCode: "ИНДЕКС / АРМЕНИЯ", mapCredit: "NATURAL EARTH / КОНТУР СТРАНЫ", footerTop: "↑ НАВЕРХ", compareCode: "СРАВНЕНИЕ / ИНДЕКС", localUnsent: "ЛОКАЛЬНО / НЕ ОТПРАВЛЕНО",
+    artResearch: "ИССЛЕДОВАНИЯ", artDiscovery: "ОТКРЫТИЯ", artConnection: "СВЯЗИ", artCoordinate: "НАЙДЕНО / СВЯЗАНО / ПРОВЕРЯЕМО",
     navIndex: "Организации", navMap: "Карта", navMethod: "Метод", navBrief: "Составить запрос",
     heroTag: "АРМЕНИЯ / ИССЛЕДОВАНИЯ / ПРОИЗВОДСТВО", heroA: "Бионауки Армении —", heroB: "на одной карте.",
     heroBody: "Находите партнёров для исследований и производства. Сравнивайте услуги, проверяйте источники и начинайте предметный диалог.", heroCta: "Открыть индекс", heroLink: "Наш метод", heroAside: "РЕАЛЬНЫЕ ОРГАНИЗАЦИИ. ПРОВЕРЯЕМЫЕ ДАННЫЕ.",
@@ -37,7 +43,10 @@ export const translations = {
     categories: { all: "Все", cro: "CRO", research: "Исследования", analytical: "Аналитика", manufacturing: "Производство", medtech: "Медтех", cosmetics: "Косметика" }
   },
   en: {
-    title: "Armenia Life Sciences Index", brand: "LIFE SCIENCES INDEX",
+    title: "Armenia Life Sciences Index", brand: "LIFE SCIENCES INDEX", country: "ARMENIA", profileCode: "PROFILE / SOURCE-LINKED",
+    homeLabel: "Life Sciences Index home", mainNavigation: "Main navigation", languageLabel: "Language", searchLabel: "Search organizations", categoryLabel: "Category", draftLabel: "Editable inquiry draft",
+    filterCode: "FILTER / 01", indexCode: "INDEX / ARMENIA", mapCredit: "NATURAL EARTH / COUNTRY OUTLINE", footerTop: "↑ TOP", compareCode: "COMPARE / INDEX", localUnsent: "LOCAL / UNSENT",
+    artResearch: "RESEARCH", artDiscovery: "DISCOVERY", artConnection: "CONNECTION", artCoordinate: "LOCATED / CONNECTED / TRACEABLE",
     navIndex: "Organizations", navMap: "Map", navMethod: "Method", navBrief: "Build an inquiry",
     heroTag: "ARMENIA / RESEARCH / MANUFACTURING", heroA: "Armenia’s life sciences,", heroB: "mapped.",
     heroBody: "Find research and manufacturing partners. Compare services, inspect sources, and start a focused conversation.", heroCta: "Explore the index", heroLink: "Our method", heroAside: "REAL ORGANIZATIONS. TRACEABLE INFORMATION.",
@@ -56,3 +65,4 @@ export const translations = {
 };
 
 export const languageNames = { hy: "Հայ", ru: "Рус", en: "Eng" };
+export const isSupportedLocale = (value) => Object.hasOwn(translations, value);
