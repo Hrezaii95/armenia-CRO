@@ -16,4 +16,4 @@ To research a candidate, record:
 | Review | UTC date the page was opened and checked |
 | Translation | Editorial summary in Armenian, Russian, and English, without adding claims |
 
-The supplied project Drive folder currently redirects to Google sign-in, so it cannot yet establish a source list. The live redesign should be published only after at least one real profile passes this review.
+The supplied project Drive folder currently redirects to Google sign-in, so it cannot yet establish a source list. The public visual preview has an empty index until at least one real profile passes this review.
