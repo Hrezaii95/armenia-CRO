@@ -29,12 +29,21 @@ for (const locale of ["hy", "ru", "en"]) {
 }
 assert.throws(() => createBrief({ recipient: "Example", service: "", stage: "Clinical", scope: "Study", timing: "Soon", contact: "Team" }, translations.en), /Complete every brief field/);
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+assert.match(html, /<html[^>]*\btranslate="no"/);
+assert.match(html, /<meta\s+name="google"\s+content="notranslate"/);
 const keys = [...html.matchAll(/data-i18n="([^"]+)"/g)].map((match) => match[1]);
-for (const locale of ["hy", "ru", "en"]) for (const key of keys) assert.equal(typeof translations[locale][key], "string", `${locale}.${key} missing`);
+for (const locale of ["hy", "ru", "en"]) {
+  for (const key of keys) assert.equal(typeof translations[locale][key], "string", `${locale}.${key} missing`);
+  for (const type of ["clinicaltrials", "gmp", "provider"]) assert.equal(typeof translations[locale].sourceTypes[type], "string", `${locale}.sourceTypes.${type} missing`);
+}
 for (const provider of providers) {
-  assert.match(provider.sourceUrl, /^https:\/\//);
+  assert.ok(["clinicaltrials", "gmp", "provider"].includes(provider.sourceType));
+  const source = new URL(provider.sourceUrl);
+  const officialGmp = provider.sourceType === "gmp" && source.protocol === "http:" && source.hostname === "www.pharm.am" && source.pathname.startsWith("/attachments/article/");
+  assert.ok(source.protocol === "https:" || officialGmp, `${provider.id}: unsupported source URL`);
   assert.match(provider.sourceChecked, /^\d{4}-\d{2}-\d{2}$/);
   assert.ok(provider.name.en && provider.name.hy && provider.name.ru);
+  assert.ok(provider.summary.en && provider.summary.hy && provider.summary.ru);
 }
 assert.ok(providers.every((provider) => !/Ararat Bioanalytics|Sevan Clinical Partners|Masis Formulation Studio/.test(provider.name.en)));
 console.log("Localization, catalog, source policy, and brief checks passed.");

@@ -1,13 +1,13 @@
-import { providers, categories } from "./data/providers.js";
-import { translations, isSupportedLocale } from "./i18n.js";
-import { filterProviders, localized, createBrief } from "./lib/catalog.js";
+import { providers, categories } from "./data/providers.js?v=20261002-agent";
+import { translations, isSupportedLocale } from "./i18n.js?v=20261002-agent";
+import { filterProviders, localized, createBrief } from "./lib/catalog.js?v=20261002-agent";
 
 const $ = (selector) => document.querySelector(selector);
 const state = { locale: initialLocale(), query: "", category: "all", compared: new Set(), recipientId: null };
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 const t = () => translations[state.locale];
 const langTag = { hy: "hy-AM", ru: "ru-RU", en: "en-US" };
-const cityCoordinates = { Yerevan: [44.515, 40.177], Gyumri: [43.845, 40.789], Vanadzor: [44.493, 40.812], Dilijan: [44.863, 40.74] };
+const cityCoordinates = { Yerevan: [44.515, 40.177], Gyumri: [43.845, 40.789], Abovyan: [44.634, 40.273], Vanadzor: [44.493, 40.812], Dilijan: [44.863, 40.74] };
 function projectPoint(longitude, latitude) {
   const radians = Math.PI / 180;
   const scale = 8325.648911506465;
@@ -24,7 +24,8 @@ function initialLocale() {
 function sourceUrl(provider) {
   try {
     const url = new URL(provider.sourceUrl || provider.website);
-    return url.protocol === "https:" ? url.href : "";
+    const officialGmp = provider.sourceType === "gmp" && url.protocol === "http:" && url.hostname === "www.pharm.am" && url.pathname.startsWith("/attachments/article/");
+    return url.protocol === "https:" || officialGmp ? url.href : "";
   } catch { return ""; }
 }
 
@@ -36,9 +37,11 @@ function dateLabel(value) {
 
 function setLocale(locale) {
   if (!isSupportedLocale(locale)) return;
+  const previousLocale = state.locale;
   state.locale = locale;
   document.documentElement.lang = locale;
   document.title = t().title;
+  $("meta[name=description]").content = t().description;
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.dataset.i18n;
     if (typeof t()[key] === "string") element.textContent = t()[key];
@@ -54,9 +57,11 @@ function setLocale(locale) {
     button.setAttribute("aria-pressed", String(active));
     button.classList.toggle("active", active);
   });
-  const stage = $("#stage-select").value;
-  $("#stage-select").innerHTML = `<option value="">${escapeHtml(t().formStageOption)}</option>${t().stages.map((label, index) => `<option value="${index}">${escapeHtml(label)}</option>`).join("")}`;
-  $("#stage-select").value = stage;
+  if ($("#inquiry-dialog").dataset.mode === "agent") {
+    const service = $("#inquiry-form [name=service]");
+    if (service.value === translations[previousLocale].aiPilotService) service.value = t().aiPilotService;
+  }
+  renderStageOptions();
   const url = new URL(location.href);
   url.searchParams.set("lang", locale);
   history.replaceState(null, "", url);
@@ -69,13 +74,20 @@ function setLocale(locale) {
 }
 
 function renderCategories() {
-  $("#categories").innerHTML = categories.map((category) => `<button type="button" data-category="${category}" class="${category === state.category ? "active" : ""}" aria-pressed="${category === state.category}">${escapeHtml(t().categories[category])}</button>`).join("");
+  $("#categories").innerHTML = categories.map((category) => {
+    const count = category === "all" ? providers.length : providers.filter((provider) => provider.sector === category).length;
+    return `<button type="button" data-category="${category}" class="${category === state.category ? "active" : ""}" aria-pressed="${category === state.category}" ${count ? "" : "disabled"}>${escapeHtml(t().categories[category])}<span>${count}</span></button>`;
+  }).join("");
 }
 
 function renderProviders() {
   const matches = filterProviders(providers, state.query, state.category);
   $("#result-count").textContent = String(matches.length);
-  $("#provider-grid").innerHTML = matches.map((provider, index) => `<article class="provider-card"><div class="card-top"><span class="card-index">NO. ${String(index + 1).padStart(2, "0")}</span><label class="card-compare"><input type="checkbox" data-compare="${escapeHtml(provider.id)}" ${state.compared.has(provider.id) ? "checked" : ""} aria-label="${escapeHtml(t().compare)} ${escapeHtml(localized(provider.name, state.locale))}">${escapeHtml(t().compare)}</label></div><div class="card-sector">${escapeHtml(t().categories[provider.sector] || provider.sector)}</div><h3>${escapeHtml(localized(provider.name, state.locale))}</h3><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="card-bottom"><span class="card-location">${escapeHtml(localized(provider.city, state.locale))} / ${escapeHtml(t().country)}</span><button class="card-open" type="button" data-profile="${escapeHtml(provider.id)}" aria-label="${escapeHtml(t().profile)}: ${escapeHtml(localized(provider.name, state.locale))}">↗</button></div></article>`).join("");
+  $("#provider-grid").innerHTML = matches.map((provider, index) => {
+    const name = localized(provider.name, state.locale);
+    const url = sourceUrl(provider);
+    return `<article class="provider-card"><div class="card-top"><span class="card-index">NO. ${String(index + 1).padStart(2, "0")}</span><label class="card-compare"><input type="checkbox" data-compare="${escapeHtml(provider.id)}" ${state.compared.has(provider.id) ? "checked" : ""} aria-label="${escapeHtml(t().compare)} ${escapeHtml(name)}">${escapeHtml(t().compare)}</label></div><div class="card-sector">${escapeHtml(t().categories[provider.sector] || provider.sector)}</div><div class="card-evidence">${escapeHtml(t().sourceTypes[provider.sourceType] || t().unknown)}</div><h3>${escapeHtml(name)}</h3><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="card-bottom"><span class="card-location">${escapeHtml(localized(provider.city, state.locale))} / ${escapeHtml(t().country)}</span><div class="card-actions">${url ? `<a class="card-source" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(t().visitSource)}: ${escapeHtml(name)}">${escapeHtml(t().visitSource)}</a>` : ""}<button class="card-open" type="button" data-profile="${escapeHtml(provider.id)}" aria-label="${escapeHtml(t().profile)}: ${escapeHtml(name)}">${escapeHtml(t().profile)}</button></div></div></article>`;
+  }).join("");
   $("#empty-state").hidden = matches.length !== 0;
   $("#empty-state h3").textContent = providers.length ? t().noMatchTitle : t().emptyTitle;
   $("#empty-state p").textContent = providers.length ? t().noMatchBody : t().emptyBody;
@@ -125,11 +137,12 @@ function openProfile(id, refresh = false) {
   const details = [
     [t().sector, t().categories[provider.sector] || provider.sector],
     [t().location, localized(provider.city, state.locale)],
+    [t().sourceType, t().sourceTypes[provider.sourceType] || t().unknown],
     [t().services, localized(provider.services, state.locale).join?.(", ") || localized(provider.services, state.locale)],
     [t().languages, provider.languages?.join(", ") || t().unknown],
     [t().evidenceDate, dateLabel(provider.sourceChecked)]
   ];
-  $("#profile-content").innerHTML = `<div class="dialog-head"><span class="dialog-code">${escapeHtml(t().profileCode)}</span><button type="button" data-close="profile-dialog" aria-label="${escapeHtml(t().close)}">×</button></div><div class="profile-content"><div class="profile-meta">${escapeHtml(t().categories[provider.sector] || provider.sector)} / ${escapeHtml(localized(provider.city, state.locale))}</div><h2>${escapeHtml(localized(provider.name, state.locale))}</h2><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="profile-grid">${details.map(([label, value]) => `<div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value || t().unknown)}</span></div>`).join("")}</div><div class="profile-source"><strong>${escapeHtml(t().source)}:</strong> ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t().visitSource)} ↗</a>` : escapeHtml(t().unknown)}<br>${escapeHtml(t().claimNote)}</div><button type="button" data-inquire="${escapeHtml(provider.id)}">${escapeHtml(t().briefCta)} ↗</button></div>`;
+  $("#profile-content").innerHTML = `<div class="dialog-head"><span class="dialog-code">${escapeHtml(t().profileCode)}</span><button type="button" data-close="profile-dialog" aria-label="${escapeHtml(t().close)}">×</button></div><div class="profile-content"><div class="profile-meta">${escapeHtml(t().categories[provider.sector] || provider.sector)} / ${escapeHtml(localized(provider.city, state.locale))}</div><h2 id="profile-dialog-title">${escapeHtml(localized(provider.name, state.locale))}</h2><p>${escapeHtml(localized(provider.summary, state.locale))}</p><div class="profile-grid">${details.map(([label, value]) => `<div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value || t().unknown)}</span></div>`).join("")}</div><div class="profile-source"><strong>${escapeHtml(t().source)}:</strong> ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t().visitSource)} ↗</a>` : escapeHtml(t().unknown)}<br>${escapeHtml(t().claimNote)}</div><button type="button" data-inquire="${escapeHtml(provider.id)}">${escapeHtml(t().briefCta)} ↗</button></div>`;
   $("#profile-dialog").dataset.id = id;
   if (!refresh) {
     $("#profile-dialog").showModal();
@@ -143,22 +156,47 @@ function openComparison(refresh = false) {
   const rows = [
     [t().sector, (p) => t().categories[p.sector] || p.sector],
     [t().location, (p) => localized(p.city, state.locale)],
+    [t().sourceType, (p) => t().sourceTypes[p.sourceType] || t().unknown],
     [t().services, (p) => localized(p.services, state.locale).join?.(", ") || t().unknown],
-    [t().evidenceDate, (p) => dateLabel(p.sourceChecked)],
-    [t().source, (p) => sourceUrl(p) || t().unknown]
+    [t().evidenceDate, (p) => dateLabel(p.sourceChecked)]
   ];
+  const sourceCells = chosen.map((provider) => {
+    const url = sourceUrl(provider);
+    return `<td>${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t().visitSource)}</a>` : escapeHtml(t().unknown)}</td>`;
+  }).join("");
   $("#compare-content").className = "compare-content";
-  $("#compare-content").innerHTML = `<table class="compare-table"><thead><tr><th>${escapeHtml(t().compare)}</th>${chosen.map((provider) => `<th>${escapeHtml(localized(provider.name, state.locale))}</th>`).join("")}</tr></thead><tbody>${rows.map(([label, value]) => `<tr><td>${escapeHtml(label)}</td>${chosen.map((provider) => `<td>${escapeHtml(value(provider))}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  $("#compare-content").innerHTML = `<table class="compare-table"><thead><tr><th>${escapeHtml(t().compare)}</th>${chosen.map((provider) => `<th>${escapeHtml(localized(provider.name, state.locale))}</th>`).join("")}</tr></thead><tbody>${rows.map(([label, value]) => `<tr><td>${escapeHtml(label)}</td>${chosen.map((provider) => `<td>${escapeHtml(value(provider))}</td>`).join("")}</tr>`).join("")}<tr><td>${escapeHtml(t().source)}</td>${sourceCells}</tr></tbody></table>`;
   if (!refresh) $("#compare-dialog").showModal();
 }
 
 function renderRecipient() {
+  const agentMode = $("#inquiry-dialog").dataset.mode === "agent";
   const provider = providers.find((item) => item.id === state.recipientId);
-  $("#inquiry-recipient").textContent = provider ? localized(provider.name, state.locale) : t().formGeneric;
+  $("#inquiry-recipient").textContent = agentMode ? t().aiPilotRecipient : provider ? localized(provider.name, state.locale) : t().formGeneric;
+  $("#inquiry-dialog .dialog-code").textContent = agentMode ? t().aiPilotFormTitle : t().formTitle;
+  $("#inquiry-dialog .dialog-inner h2").textContent = agentMode ? t().aiPilotFormTitle : t().formTitle;
+  $("#inquiry-dialog .dialog-inner>p").textContent = agentMode ? t().aiPilotFormIntro : t().formIntro;
+  $("#inquiry-dialog [data-i18n=formService]").textContent = agentMode ? t().aiPilotServiceLabel : t().formService;
+  $("#inquiry-dialog [data-i18n=formStage]").textContent = agentMode ? t().aiPilotStageLabel : t().formStage;
+  $("#inquiry-dialog [data-i18n=formScope]").textContent = agentMode ? t().aiPilotScopeLabel : t().formScope;
 }
 
-function openInquiry(id = null) {
+function renderStageOptions() {
+  const select = $("#stage-select");
+  const selected = select.value;
+  const agentMode = $("#inquiry-dialog").dataset.mode === "agent";
+  const labels = agentMode ? t().aiPilotStages : t().stages;
+  const prompt = agentMode ? t().aiPilotStageOption : t().formStageOption;
+  select.innerHTML = `<option value="">${escapeHtml(prompt)}</option>${labels.map((label, index) => `<option value="${index}">${escapeHtml(label)}</option>`).join("")}`;
+  select.value = selected;
+}
+
+function openInquiry(id = null, mode = "provider") {
   state.recipientId = id;
+  $("#inquiry-dialog").dataset.mode = mode;
+  $("#inquiry-form").reset();
+  $("#inquiry-form [name=service]").value = mode === "agent" ? t().aiPilotService : "";
+  renderStageOptions();
   renderRecipient();
   $("#draft-result").hidden = true;
   $("#inquiry-dialog").showModal();
@@ -177,8 +215,8 @@ function initMotion() {
   intro.from(".hero-eyebrow", { y: 18, autoAlpha: 0, duration: .55 })
     .from(".title-line", { y: 55, autoAlpha: 0, stagger: .14, duration: .9 }, "-=.2")
     .from(".hero-description,.hero-actions", { y: 22, autoAlpha: 0, stagger: .1, duration: .65 }, "-=.45")
-    .from(".hero-art", { scale: .93, autoAlpha: 0, duration: 1 }, "<-.35");
-  gsap.to(".art-core", { y: -10, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    .from(".hero-art", { y: 18, autoAlpha: 0, duration: .85 }, "<-.35")
+    .from(".workflow-input,.workflow-draft,.workflow-review", { y: 10, autoAlpha: 0, stagger: .12, duration: .5 }, "-=.55");
   if (window.ScrollTrigger) {
     gsap.utils.toArray(".section-header,.method-card,.metric-row").forEach((element) => {
       gsap.from(element, { y: 36, duration: .75, ease: "power2.out", scrollTrigger: { trigger: element, start: "top 90%", once: true } });
@@ -214,11 +252,14 @@ $("#compare-clear").addEventListener("click", () => { state.compared.clear(); re
 $("#compare-open").addEventListener("click", () => openComparison());
 $("#nav-inquiry").addEventListener("click", () => openInquiry());
 $("#brief-open").addEventListener("click", () => openInquiry());
+$("#agent-pilot-open")?.addEventListener("click", () => openInquiry(null, "agent"));
 $("#inquiry-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const form = Object.fromEntries(new FormData(event.currentTarget));
   const stage = $("#stage-select").selectedOptions[0].textContent;
-  const draft = createBrief({ recipient: $("#inquiry-recipient").textContent, ...form, stage }, t());
+  const agentMode = $("#inquiry-dialog").dataset.mode === "agent";
+  const copy = agentMode ? { ...t(), formSubject: t().aiPilotFormTitle, formService: t().aiPilotServiceLabel, formStage: t().aiPilotStageLabel, formScope: t().aiPilotScopeLabel, formAsk: t().aiPilotAsk } : t();
+  const draft = createBrief({ recipient: $("#inquiry-recipient").textContent, ...form, stage }, copy);
   $("#draft-text").value = draft;
   $("#draft-result").hidden = false;
   $("#draft-result").scrollIntoView({ block: "nearest", behavior: "smooth" });

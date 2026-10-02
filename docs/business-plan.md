@@ -1,6 +1,6 @@
 # Armenia Life Sciences Exchange — AI-first business plan
 
-**Working plan, 2 October 2026.** The supplied Drive folder and earlier company analysis were inaccessible from this environment. No provider inventory, customer interviews, willingness to pay, or market size has been verified. Company counts, prices, conversion rates, and revenue below are explicit working assumptions. No real provider is named in the demo. The first commercial step is to replace these assumptions with interviews, a source-backed provider inventory, and a review of Armenian and destination-market rules.
+**Working plan, 2 October 2026.** The supplied Drive folder and earlier company analysis were inaccessible from this environment. The demo now contains ten organizations with narrow, source-linked records from ClinicalTrials.gov and Armenian GMP registers; their commercial CRO services and provider-owned websites have not been verified. No complete provider inventory, customer interviews, willingness to pay, or market size has been established. Company counts, prices, conversion rates, and revenue below are working assumptions. The first commercial step is to validate provider capabilities directly, interview buyers and providers, and review Armenian and destination-market rules.
 
 **Concept demo:** https://hrezaii95.github.io/armenia-CRO/
 
@@ -80,7 +80,7 @@ Pause agent expansion if no provider funds a scoped pilot after ten qualified wo
 
 ## Research tasks and source register
 
-The links below identify **primary sources to check**, not documents reviewed in this environment. The current network policy blocked the supplied Drive folder, and no browser research connector was available. Before externalizing this plan, record access date, exact citation, and which claim each source supports.
+The demo's initial records were checked on 2 October 2026 against [ClinicalTrials.gov study records](https://clinicaltrials.gov/study/NCT07156916), the Armenian regulator's [domestic GMP list](http://www.pharm.am/attachments/article/9608/GMP%20certificates_arm_2.pdf), and its [EAEU GMP database](http://www.pharm.am/attachments/article/5966/EUAU%20GMP%20INSPECTION%20DATABASE_1.xlsx). These sources establish listed study sites, manufacturer names and locations, and published certificate details only. The supplied Drive folder and provider-owned sites remain inaccessible in this environment. The sources below are **further checks**, not evidence for market-size or commercial-capability claims in this plan.
 
 - Armenian Ministry of Health: [moh.am](https://www.moh.am/) — licensing, health and pharmaceutical policy.
 - Armenian Scientific Centre of Drug and Medical Technology Expertise: [pharm.am](https://www.pharm.am/) — medicines and relevant regulatory procedures.

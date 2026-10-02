@@ -131,6 +131,9 @@
   color: var(--ink);
 }
 .workflow-review small { margin: 0 0 5px; }
+.workflow-input strong,
+.workflow-draft strong,
+.workflow-review strong { overflow-wrap: anywhere; }
 .workflow-check {
   display: grid;
   place-items: center;
@@ -176,4 +179,72 @@
   .workflow-review { min-height: 65px; padding: 9px 10px; grid-template-columns: 24px minmax(0,1fr) 24px; }
   .workflow-check { width: 23px; height: 23px; font-size: 16px; }
   .workflow-foot { font-size: 11px; padding-top: 8px; }
+}
+
+/* Clear paths from each record to its source and profile. */
+.provider-card { min-height: 350px; }
+.provider-card p { font-size: 14px; line-height: 1.6; }
+.card-sector { margin-top: 34px; }
+.card-evidence { font-size: 11px; }
+.card-bottom { align-items: end; }
+.card-location { font-size: 11px; line-height: 1.4; }
+.card-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.card-source,
+.card-open { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 12px; font-size: 12px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+.card-source { text-decoration: underline; text-underline-offset: 3px; }
+.card-source:hover { color: #526d2e; }
+.card-open { position: static; width: auto; height: auto; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); }
+.card-open:hover { background: #405037; color: var(--paper); }
+.card-open::before,
+.card-open::after { display: none; }
+.compare-table a { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Important descriptions stay readable at all viewport sizes. */
+.ai-capability p,
+.ai-delivery p,
+.method-card p,
+.ai-commercial p,
+.ai-offer-lead p { font-size: 14px; }
+.map-footnote,
+.rail-note,
+.footer-bottom p,
+.profile-source { font-size: 12px; }
+.search-wrap input { font-size: 14px; }
+@media(min-width:761px) {
+  html[lang=hy] .hero h1 { font-size: clamp(36px,5.1vw,90px); }
+}
+
+/* Keep section navigation available below desktop width. */
+.nav-short { display: none; }
+@media(max-width:1100px) {
+  .header { height: auto; min-height: 82px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 0; row-gap: 12px; }
+  .nav { order: 3; display: flex; width: 100%; gap: 24px; overflow-x: auto; padding: 12px 0; border-top: 1px solid #c6cac0; scrollbar-width: thin; }
+  .nav a { font-size: 12px; }
+  .header-tools { margin-left: auto; }
+}
+@media(max-width:760px) {
+  .header { min-height: 0; padding: 12px 18px 0; }
+  .nav { padding: 10px 0 12px; gap: 12px; justify-content: space-between; }
+  .nav a { font-size: 12px; }
+  .nav-long { display: none; }
+  .nav-short { display: inline; }
+  .section-header p,
+  .hero-description,
+  .ai-offer-lead p,
+  .ai-capability p,
+  .ai-commercial p,
+  .ai-delivery p,
+  .method-card p,
+  .brief-main p,
+  .provider-card p { font-size: 15px; }
+  .provider-card { min-height: 0; padding: 22px 0 24px; }
+  .provider-card h3 { font-size: 25px; }
+  .card-sector { margin-top: 22px; }
+  .card-bottom { display: block; padding-top: 20px; }
+  .card-location { display: block; margin-bottom: 11px; }
+  .card-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .card-source,
+  .card-open { width: 100%; min-height: 44px; padding: 9px 8px; font-size: 12px; }
+  .categories button { min-height: 44px; font-size: 12px; }
+  .clear-filter { min-height: 44px; font-size: 12px; }
 }
