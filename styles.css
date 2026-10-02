@@ -15,3 +15,165 @@
 .ai-delivery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid #b4bdb1;border-top:0}.ai-delivery article{padding:22px 24px 26px;border-right:1px solid #b4bdb1}.ai-delivery article:last-child{border-right:0}.ai-delivery article>span{font:800 10px Manrope;color:#6c8450}.ai-delivery h3{font-size:18px;line-height:1.25;letter-spacing:-.035em;margin:26px 0 9px}.ai-delivery p{font-size:11px;line-height:1.65;color:#58665b;margin:0;max-width:285px}
 .ai-capability-mark,.ai-pilot-button span:last-child,.ai-flow-arrow{font-family:Arial,sans-serif}
 @media(max-width:760px){.ai-delivery{display:block}.ai-delivery article{border-right:0;border-bottom:1px solid #b4bdb1;padding:20px 23px}.ai-delivery article:last-child{border-bottom:0}.ai-delivery h3{margin-top:14px}}
+.card-evidence{margin-top:7px;font:700 10px Manrope,NotoArmenian,sans-serif;line-height:1.4;color:#627065}
+.categories button:after{display:none}.categories button>span{font:800 10px Manrope,sans-serif;color:inherit;opacity:.65}.categories button:disabled{opacity:.42;cursor:not-allowed}.categories button:disabled:hover{background:transparent;color:#5e695f;padding-left:6px}@media(max-width:760px){.categories button:disabled:hover{padding-left:11px}}
+.card-open{font-size:0;position:relative}.card-open:before{content:"";position:absolute;width:11px;height:11px;top:10px;right:10px;border-top:2px solid currentColor;border-right:2px solid currentColor}.card-open:after{content:"";position:absolute;width:18px;height:2px;top:22px;left:9px;background:currentColor;transform:rotate(-45deg);transform-origin:center}
+.header-action span:last-child,.link-arrow,.ai-pilot-button span:last-child,.brief-button span:last-child,.form-submit span:last-child,.ai-capability-mark,.map-frame-foot span:last-child{font-size:0!important;width:18px;height:18px;display:inline-block;position:relative;flex:none}.header-action span:last-child:before,.link-arrow:before,.ai-pilot-button span:last-child:before,.brief-button span:last-child:before,.form-submit span:last-child:before,.ai-capability-mark:before,.map-frame-foot span:last-child:before{content:"";position:absolute;width:9px;height:9px;top:1px;right:1px;border-top:2px solid currentColor;border-right:2px solid currentColor}.header-action span:last-child:after,.link-arrow:after,.ai-pilot-button span:last-child:after,.brief-button span:last-child:after,.form-submit span:last-child:after,.ai-capability-mark:after,.map-frame-foot span:last-child:after{content:"";position:absolute;width:15px;height:2px;left:0;bottom:3px;background:currentColor;transform:rotate(-45deg);transform-origin:center}.under-link span:last-child{font-size:0;width:16px;height:16px;display:inline-block;position:relative}.under-link span:last-child:before{content:"";position:absolute;width:8px;height:8px;right:0;bottom:0;border-right:2px solid currentColor;border-bottom:2px solid currentColor}.under-link span:last-child:after{content:"";position:absolute;width:14px;height:2px;top:6px;left:0;background:currentColor;transform:rotate(45deg)}.hero-foot a span:last-child{font-size:0;width:13px;height:20px;display:inline-block;position:relative}.hero-foot a span:last-child:before{content:"";position:absolute;width:2px;height:16px;left:6px;top:0;background:currentColor}.hero-foot a span:last-child:after{content:"";position:absolute;width:7px;height:7px;left:3px;bottom:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
+
+/* Hero concept: source-grounded workflow, shown as an illustration rather than a live agent. */
+.hero-art {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px 18px;
+  border: 1px solid #52665a;
+  background: #202926;
+  color: #ecf0e8;
+  background-image: none;
+}
+.hero-art::before { display: none; }
+.workflow-head,
+.workflow-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 14px;
+}
+.workflow-head {
+  padding-bottom: 13px;
+  border-bottom: 1px solid #52665a;
+}
+.workflow-serial,
+.workflow-foot {
+  font: 800 11px/1.4 Manrope,NotoArmenian,sans-serif;
+  letter-spacing: .11em;
+}
+.workflow-serial { color: var(--lime); padding-top: 6px; white-space: nowrap; }
+.workflow-demo {
+  display: block;
+  max-width: 235px;
+  padding: 7px 9px;
+  border: 1px solid #a6c174;
+  color: #e7f7c2;
+  font: 800 11px/1.35 Manrope,NotoArmenian,sans-serif;
+  letter-spacing: .035em;
+  text-align: right;
+}
+.workflow-stack { width: 100%; max-width: 620px; margin: auto; }
+.workflow-inputs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.workflow-input {
+  min-width: 0;
+  min-height: 98px;
+  padding: 12px 14px;
+  background: #e7e9df;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.workflow-source { background: #d9e2ce; border-left: 4px solid var(--lime); padding-left: 10px; }
+.workflow-step {
+  font: 800 11px/1.2 Manrope,NotoArmenian,sans-serif;
+  letter-spacing: .08em;
+  opacity: .7;
+}
+.workflow-input small,
+.workflow-draft small,
+.workflow-review small {
+  display: block;
+  font: 800 11px/1.35 Manrope,NotoArmenian,sans-serif;
+  letter-spacing: .035em;
+  margin: 11px 0 4px;
+}
+.workflow-input strong,
+.workflow-draft strong,
+.workflow-review strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+}
+.workflow-connector {
+  height: 20px;
+  display: grid;
+  place-items: center;
+  color: var(--lime);
+  font: 700 18px/1 Manrope,sans-serif;
+}
+.workflow-draft {
+  min-height: 112px;
+  display: grid;
+  grid-template-columns: 31px minmax(0,1fr);
+  gap: 6px;
+  padding: 12px 15px;
+  background: #2a3930;
+  border: 1px solid #667b69;
+}
+.workflow-draft .workflow-step { color: var(--lime); padding-top: 2px; }
+.workflow-draft small { color: #bccebd; margin: 0 0 5px; }
+.workflow-citation {
+  display: block;
+  margin-top: 11px;
+  padding-top: 7px;
+  border-top: 1px solid #5e7561;
+  color: #d4f36c;
+  font: 700 11px/1.35 Manrope,NotoArmenian,sans-serif;
+}
+.workflow-review {
+  min-height: 83px;
+  display: grid;
+  grid-template-columns: 31px minmax(0,1fr) 32px;
+  gap: 6px;
+  align-items: center;
+  padding: 12px 15px;
+  background: var(--lime);
+  color: var(--ink);
+}
+.workflow-review small { margin: 0 0 5px; }
+.workflow-check {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid var(--ink);
+  font: 700 20px/1 Manrope,sans-serif;
+}
+.workflow-foot {
+  padding-top: 12px;
+  border-top: 1px solid #52665a;
+  color: #b9c8b8;
+}
+.workflow-foot span:last-child { color: var(--lime); white-space: nowrap; }
+@media(max-width:760px) {
+  .hero-main { padding-top: 47px; padding-bottom: 31px; }
+  .hero h1 { margin-top: 20px; margin-bottom: 18px; }
+  html[lang=hy] .hero h1 { font-size: clamp(28px,8.6vw,40px); letter-spacing: -.065em; }
+  .hero-actions { margin-top: 24px; }
+  .hero-art {
+    height: auto;
+    min-height: 0;
+    margin: 0 18px;
+    padding: 13px 14px;
+    gap: 11px;
+  }
+  .workflow-head { padding-bottom: 10px; }
+  .workflow-serial { font-size: 11px; }
+  .workflow-demo { font-size: 11px; padding: 5px 7px; max-width: 198px; }
+  .workflow-inputs { gap: 6px; }
+  .workflow-input { min-height: 74px; padding: 8px 9px; }
+  .workflow-source { padding-left: 7px; }
+  .workflow-input small { font-size: 11px; margin: 7px 0 3px; }
+  .workflow-input strong { font-size: 14px; line-height: 1.25; }
+  .workflow-step { font-size: 11px; }
+  .workflow-connector { height: 13px; font-size: 15px; }
+  .workflow-draft { min-height: 88px; padding: 9px 10px; grid-template-columns: 24px minmax(0,1fr); }
+  .workflow-draft small,
+  .workflow-review small { font-size: 11px; margin-bottom: 3px; }
+  .workflow-draft strong,
+  .workflow-review strong { font-size: 14px; line-height: 1.25; }
+  .workflow-citation { font-size: 11px; margin-top: 7px; padding-top: 5px; }
+  .workflow-review { min-height: 65px; padding: 9px 10px; grid-template-columns: 24px minmax(0,1fr) 24px; }
+  .workflow-check { width: 23px; height: 23px; font-size: 16px; }
+  .workflow-foot { font-size: 11px; padding-top: 8px; }
+}
