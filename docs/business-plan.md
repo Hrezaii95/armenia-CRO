@@ -2,6 +2,8 @@
 
 **Prepared 2 October 2026.** This is a decision framework, not a verified market study. The supplied Drive folder and earlier company analysis were inaccessible from this environment, and this repository was empty. Company counts, prices, conversion rates, and revenue below are explicit working assumptions. No real provider is named in the demo. The first commercial step is to replace these assumptions with interviews, a source backed provider inventory, and a review of Armenian and destination market rules.
 
+**Concept demo:** https://hrezaii95.github.io/armenia-CRO/
+
 ## Executive decision
 
 Build a trusted discovery and inquiry layer for Armenian contract research and analytical services, serving Armenian and foreign life sciences buyers. Begin with a narrowly curated directory and a structured request for quotation (RFQ) flow. This solves a visible purchasing problem before attempting autonomous laboratory or clinical workflows. Add agentic assistance for provider operations only when real providers grant access to their data and a human can approve consequential outputs.
