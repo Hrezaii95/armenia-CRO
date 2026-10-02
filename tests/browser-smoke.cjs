@@ -1,0 +1,43 @@
+// Run after starting: python3 -m http.server 4173
+const assert = require("node:assert/strict");
+const { chromium } = require("playwright");
+
+(async () => {
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
+  const page = await browser.newPage({ viewport: { width: 1365, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
+  assert.equal(await page.locator(".provider-card").count(), 6);
+  await page.locator("#search").fill("bioanalysis");
+  assert.equal(await page.locator(".provider-card").count(), 1);
+  await page.locator("#clear-filters").click();
+  await page.getByRole("button", { name: "CRO", exact: true }).click();
+  assert.equal(await page.locator(".provider-card").count(), 1);
+  await page.locator("#clear-filters").click();
+  await page.locator('[data-compare="ararat-bioanalytics"]').check();
+  await page.locator('[data-compare="sevan-clinical-partners"]').check();
+  await page.locator("#compare-open").click();
+  assert.equal(await page.locator("#compare-dialog[open]").count(), 1);
+  assert.match(await page.locator("#compare-content").innerText(), /Ararat Bioanalytics/);
+  await page.locator('[data-close="compare-dialog"]').click();
+  await page.locator('[data-profile="ararat-bioanalytics"]').click();
+  assert.equal(await page.locator("#profile-dialog[open]").count(), 1);
+  await page.locator('[data-inquire="ararat-bioanalytics"]').click();
+  await page.locator('[name="service"]').fill("Bioanalysis");
+  await page.locator('[name="stage"]').selectOption("Preclinical");
+  await page.locator('[name="scope"]').fill("Small molecule samples");
+  await page.locator('[name="timing"]').fill("Next quarter");
+  await page.locator('[name="contact"]').fill("Example team");
+  await page.getByRole("button", { name: "Create my brief" }).click();
+  assert.match(await page.locator("#draft-text").innerText(), /DRAFT ONLY/);
+  assert.deepEqual(errors, []);
+  await page.screenshot({ path: "/tmp/armenia-life-sciences-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('[data-close="inquiry-dialog"]').click();
+  await page.screenshot({ path: "/tmp/armenia-life-sciences-mobile.png", fullPage: true });
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);
+  assert.ok(width <= 390, `Mobile horizontal overflow: ${width}px`);
+  await browser.close();
+  console.log("Browser journey and mobile layout checks passed.");
+})().catch((error) => { console.error(error); process.exitCode = 1; });
