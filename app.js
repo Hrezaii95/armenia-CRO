@@ -7,7 +7,12 @@ const state = { locale: initialLocale(), query: "", category: "all", compared: n
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 const t = () => translations[state.locale];
 const langTag = { hy: "hy-AM", ru: "ru-RU", en: "en-US" };
-const mapCities = { Yerevan: [228, 234], Gyumri: [130, 117], Vanadzor: [224, 112], Dilijan: [278, 126] };
+const cityCoordinates = { Yerevan: [44.515, 40.177], Gyumri: [43.845, 40.789], Vanadzor: [44.493, 40.812], Dilijan: [44.863, 40.74] };
+function projectPoint(longitude, latitude) {
+  const radians = Math.PI / 180;
+  const scale = 8325.648911506465;
+  return [scale * longitude * radians - 6240.845678467901, 6619.062631582581 - scale * Math.log(Math.tan(Math.PI / 4 + latitude * radians / 2))];
+}
 
 function initialLocale() {
   const requested = new URLSearchParams(location.search).get("lang");
@@ -101,8 +106,9 @@ function renderMapMarkers() {
   }
   const stage = $(".map-stage").getBoundingClientRect();
   const image = $(".map-stage img").getBoundingClientRect();
-  $("#map-markers").innerHTML = [...byCity].filter(([city]) => mapCities[city]).map(([city, list]) => {
-    const [x, y] = mapCities[city];
+  $("#map-markers").innerHTML = [...byCity].filter(([city, list]) => cityCoordinates[city] || (Number.isFinite(list[0]?.longitude) && Number.isFinite(list[0]?.latitude))).map(([city, list]) => {
+    const [longitude, latitude] = cityCoordinates[city] || [list[0].longitude, list[0].latitude];
+    const [x, y] = projectPoint(longitude, latitude);
     const left = image.left - stage.left + image.width * x / 600;
     const top = image.top - stage.top + image.height * y / 500;
     return `<span class="map-marker" style="left:${left}px;top:${top}px" title="${escapeHtml(city)}: ${list.length}"><span>${escapeHtml(city)} · ${list.length}</span></span>`;
